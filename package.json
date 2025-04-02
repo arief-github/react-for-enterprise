@@ -30,7 +30,8 @@
     "@tailwindcss/forms": "^0.5.3",
     "@types/node": "^18.11.9",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.4.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
