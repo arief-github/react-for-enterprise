@@ -1,23 +1,18 @@
-﻿import {
-  GlobalSpinnerContext,
-  GlobalSpinnerContextValue,
-} from '@/context/GlobalSpinnerContext';
-import clsx from 'clsx';
-import { useContext } from 'react';
+﻿import clsx from 'clsx';
 
-// type GlobalSpinnerProps = {};
+type GlobalSpinnerProps = {
+  show: boolean;
+};
 
-const GlobalSpinner = () => {
-  const { isSpinnerVisible } = useContext(
-    GlobalSpinnerContext
-  ) as GlobalSpinnerContextValue;
+const GlobalSpinner = (props: GlobalSpinnerProps) => {
+  const { show } = props;
 
   return (
     <div className='relative'>
       <div
         className={clsx(
           'z-40 min-h-screen min-w-screen bg-gray-900 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 items-center justify-center',
-          isSpinnerVisible ? 'flex' : 'hidden'
+          show ? 'flex' : 'hidden'
         )}
       >
         <div className='w-64 h-48 bg-white rounded-lg flex items-center justify-center'>
