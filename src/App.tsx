@@ -7,6 +7,7 @@ import Spinner from '@/components/Spinner';
 const About = lazy(() => import('./views/About'));
 const Home = lazy(() => import('./views/Home'));
 const Contact = lazy(() => import('./views/Contact'));
+const Ingredients = lazy(() => import('./components/Ingredients/Ingredients'));
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Link to='/'>Home</Link>
           <Link to='/about'>About</Link>
           <Link to='/contact'>Contact</Link>
+          <Link to='/ing'>Ingredients</Link>
         </nav>
       </div>
 
@@ -30,6 +32,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
+          <Route path='/ing' element={<Ingredients />} />
         </Routes>
       </Suspense>
     </div>
