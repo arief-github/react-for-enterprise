@@ -23,7 +23,6 @@ const initialIngredients = [
 const Ingredients = () => {
   console.log('Ingredients rendered');
 
-  const [ingredient, setIngredient] = useState('');
   const [ingredients, setIngredients] =
     useState<Ingredient[]>(initialIngredients);
 
@@ -61,11 +60,7 @@ const Ingredients = () => {
           ingredients={ingredients}
           deleteIngredient={deleteIngredient}
         />
-        <AddIngredient
-          addIngredient={addIngredient}
-          ingredient={ingredient}
-          setIngredient={setIngredient}
-        />
+        <AddIngredient addIngredient={addIngredient} />
       </div>
     </div>
   );
