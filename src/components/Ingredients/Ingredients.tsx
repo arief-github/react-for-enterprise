@@ -1,9 +1,8 @@
-﻿import { useState, useCallback, useMemo } from 'react';
+﻿import React, { useState, useCallback, useMemo } from 'react';
 import { nanoid } from 'nanoid';
 import { Ingredient } from '@/components/Ingredients/Ingredient.types';
 import IngredientsList from '@/components/Ingredients/IngredientsList';
 import AddIngredient from '@/components/Ingredients/AddIngredient';
-import IngredientsInfoHelper from '@/components/Ingredients/IngredientsInfoHelper';
 
 const initialIngredients = [
   {
@@ -20,11 +19,17 @@ const initialIngredients = [
   },
 ];
 
-const Ingredients = () => {
+type IngredientsProps = {
+  ingredientsInfoHelper: React.ReactNode;
+};
+
+const Ingredients = (props: IngredientsProps) => {
   console.log('Ingredients rendered');
 
   const [ingredients, setIngredients] =
     useState<Ingredient[]>(initialIngredients);
+
+  const { ingredientsInfoHelper } = props;
 
   const addIngredient = (ingredient: string) => {
     setIngredients((ingredients) => [
@@ -52,7 +57,7 @@ const Ingredients = () => {
     <div className='mt-8 max-w-[20rem] mx-auto'>
       <div className='flex justify-between'>
         {createIngredientsHeaderText}
-        <IngredientsInfoHelper />
+        {ingredientsInfoHelper}
       </div>
 
       <div className='space-y-4'>

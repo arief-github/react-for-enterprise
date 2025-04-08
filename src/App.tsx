@@ -3,6 +3,7 @@ import './App.css';
 
 import { Link, Route, Routes } from 'react-router-dom';
 import Spinner from '@/components/Spinner';
+import IngredientsInfoHelper from '@/components/Ingredients/IngredientsInfoHelper';
 
 const About = lazy(() => import('./views/About'));
 const Home = lazy(() => import('./views/Home'));
@@ -32,7 +33,12 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
-          <Route path='/ing' element={<Ingredients />} />
+          <Route
+            path='/ing'
+            element={
+              <Ingredients ingredientsInfoHelper={<IngredientsInfoHelper />} />
+            }
+          />
         </Routes>
       </Suspense>
     </div>
