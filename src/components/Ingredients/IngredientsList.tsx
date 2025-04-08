@@ -1,4 +1,5 @@
 ﻿import { Ingredient } from './Ingredient.types';
+import { memo } from 'react';
 
 type IngredientsListProps = {
   ingredients: Ingredient[];
@@ -20,7 +21,14 @@ const IngredientList = (props: IngredientsListProps) => {
               className='py-3 flex justify-between items-center'
             >
               <span>{ingredient.name}</span>
-              <button onClick={() => deleteIngredient(ingredient.id)}>
+              <button
+                onClick={() => {
+                  console.log(
+                    'DeleteIngredient Recreated from Ingredient List'
+                  );
+                  deleteIngredient(ingredient.id);
+                }}
+              >
                 ❌
               </button>
             </li>
@@ -31,4 +39,10 @@ const IngredientList = (props: IngredientsListProps) => {
   );
 };
 
-export default IngredientList;
+// commenting on when to use props equation props in memo
+// export default memo(
+//   IngredientList,
+//   (prevProps, nextProps) => prevProps.ingredients === nextProps.ingredients
+// );
+
+export default memo(IngredientList);

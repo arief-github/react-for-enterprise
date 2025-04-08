@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useState, useCallback } from 'react';
 import { nanoid } from 'nanoid';
 import { Ingredient } from '@/components/Ingredients/Ingredient.types';
 import IngredientsList from '@/components/Ingredients/IngredientsList';
@@ -37,9 +37,10 @@ const Ingredients = () => {
     ]);
   };
 
-  const deleteIngredient = (id: string) => {
+  const deleteIngredient = useCallback((id: string) => {
+    console.log('Delete Ingredient is re-created');
     setIngredients((ingredients) => ingredients.filter((ing) => ing.id !== id));
-  };
+  }, []);
 
   const createIngredientsHeaderText = () => {
     console.log('IngredientsHeaderText called');
