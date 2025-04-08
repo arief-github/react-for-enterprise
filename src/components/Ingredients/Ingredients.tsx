@@ -1,4 +1,4 @@
-﻿import { useState, useCallback } from 'react';
+﻿import { useState, useCallback, useMemo } from 'react';
 import { nanoid } from 'nanoid';
 import { Ingredient } from '@/components/Ingredients/Ingredient.types';
 import IngredientsList from '@/components/Ingredients/IngredientsList';
@@ -42,17 +42,17 @@ const Ingredients = () => {
     setIngredients((ingredients) => ingredients.filter((ing) => ing.id !== id));
   }, []);
 
-  const createIngredientsHeaderText = () => {
+  const createIngredientsHeaderText = useMemo(() => {
     console.log('IngredientsHeaderText called');
     return (
       <h2 className='mb-4 font-semibold'>Ingredients ({ingredients.length})</h2>
     );
-  };
+  }, [ingredients.length]);
 
   return (
     <div className='mt-8 max-w-[20rem] mx-auto'>
       <div className='flex justify-between'>
-        {createIngredientsHeaderText()}
+        {createIngredientsHeaderText}
         <IngredientsInfoHelper />
       </div>
 
