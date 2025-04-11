@@ -12,6 +12,8 @@ import './App.css';
 
 import { Link, Route, Routes } from 'react-router-dom';
 import Spinner from '@/components/Spinner';
+import TrackCursor from '@/components/TrackCursor';
+import Search from '@/components/Search';
 
 type User = {
   id: number;
@@ -59,6 +61,11 @@ function App() {
           <Link to='/about'>About</Link>
           <Link to='/contact'>Contact</Link>
         </nav>
+      </div>
+
+      <div className='space-y-8'>
+        <TrackCursor />
+        <Search />
       </div>
 
       <div
