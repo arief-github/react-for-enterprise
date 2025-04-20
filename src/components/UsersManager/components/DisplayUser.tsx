@@ -1,9 +1,11 @@
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { removeUser, selectUser } from '../userSlice';
+import Spinner from '@/components/UsersManager/components/Spinner';
 
 const DisplayUser = () => {
   const dispatch = useAppDispatch();
   const users = useAppSelector((state) => state.users.users);
+  const deletingUserId = useAppSelector((state) => state.users.deletingUserId);
 
   return (
     <>
@@ -18,7 +20,11 @@ const DisplayUser = () => {
               >
                 {user.email}
               </button>
-              <button onClick={() => dispatch(removeUser(user))}>X</button>
+              {deletingUserId === user.id ? (
+                <Spinner show />
+              ) : (
+                <button onClick={() => dispatch(removeUser(user))}>X</button>
+              )}
             </li>
           );
         })}

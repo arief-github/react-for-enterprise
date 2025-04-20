@@ -1,4 +1,4 @@
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import React, { useState } from 'react';
 import { addUser } from '../userSlice';
 
@@ -11,6 +11,10 @@ const createdId = () => '_' + Math.random().toString(36).substring(2, 9);
 
 const AddUser = () => {
   const dispatch = useAppDispatch();
+  const isAddingUser = useAppSelector(
+    (state) => state.users.addUserStatus === 'PENDING'
+  );
+
   const [form, setForm] = useState(initialState);
 
   const onAddUser = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -69,8 +73,9 @@ const AddUser = () => {
         <button
           className='w-28 self-end bg-blue-700 text-blue-100 px-4 py-3'
           onClick={onAddUser}
+          disabled={isAddingUser}
         >
-          Add User
+          {isAddingUser ? 'Adding...' : 'Add User'}
         </button>
       </form>
     </>

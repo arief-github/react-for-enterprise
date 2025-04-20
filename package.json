@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev": "concurrently \"vite --port 3000\" \" cd server && pnpm run start \"",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "stylelint": "npx stylelint \"./**/*.{css,scss,sass}\" --config \"./stylelint.config.cjs\"",
