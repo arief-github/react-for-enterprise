@@ -1,8 +1,8 @@
 import {
-  createSelector,
   createSlice,
   PayloadAction,
   createAsyncThunk,
+  createEntityAdapter,
 } from '@reduxjs/toolkit';
 import { User } from './UsersManager.types';
 import { RootState } from '@/store';
@@ -38,12 +38,17 @@ export const removeUser = createAsyncThunk(
   }
 );
 
+const userAdapter = createEntityAdapter<User>({
+  sortComparer: (a, b) => a.email.localeCompare(b.email),
+});
+
 export const usersSlice = createSlice({
   name: 'users',
-  initialState,
+  initialState: userAdapter.getInitialState<UserState>(initialState),
   reducers: {
     setUsers: (state, action: PayloadAction<User[]>) => {
-      state.users = action.payload;
+      // state.users = action.payload;
+      userAdapter.setAll(state, action.payload);
     },
     selectUser: (state, action: PayloadAction<string>) => {
       state.selectedUserId = action.payload;
@@ -56,7 +61,8 @@ export const usersSlice = createSlice({
 
     builder.addCase(fetchUsers.fulfilled, (state, action) => {
       state.fetchUsersStatus = 'SUCCESS';
-      state.users = action.payload;
+      // state.users = action.payload;
+      userAdapter.setAll(state, action.payload);
     });
 
     builder.addCase(fetchUsers.rejected, (state) => {
@@ -68,7 +74,8 @@ export const usersSlice = createSlice({
     });
 
     builder.addCase(addUser.fulfilled, (state, action) => {
-      state.users.push(action.payload.user);
+      // state.users.push(action.payload.user);
+      userAdapter.addOne(state, action.payload.user);
       state.addUserStatus = 'SUCCESS';
     });
 
@@ -82,9 +89,11 @@ export const usersSlice = createSlice({
     });
 
     builder.addCase(removeUser.fulfilled, (state, action) => {
-      state.users = state.users.filter(
-        (_user) => _user.id !== action.payload.id
-      );
+      // state.users = state.users.filter(
+      //   (_user) => _user.id !== action.payload.id
+      // );
+
+      userAdapter.removeOne(state, action.payload.id);
     });
 
     builder.addCase(removeUser.rejected, (state) => {
@@ -96,15 +105,16 @@ export const usersSlice = createSlice({
 
 export const { selectUser, setUsers } = usersSlice.actions;
 
-export const getSelectedUser = createSelector(
-  (state: RootState) => state.users,
-  (users) => {
-    if (users.selectedUserId) {
-      return users.users.find((user) => user.id === users.selectedUserId);
-    }
-
-    return null;
-  }
+export const usersSelector = userAdapter.getSelectors<RootState>(
+  (state) => state.users
 );
+
+export const getSelectedUser = (state: RootState) => {
+  return state.users.selectedUserId
+    ? usersSelector.selectById(state, state.users.selectedUserId)
+    : null;
+};
+
+export const { selectAll: selectAllUsers } = usersSelector;
 
 export default usersSlice.reducer;
