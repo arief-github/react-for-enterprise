@@ -21,6 +21,6 @@
       "test-utils": ["src/helpers/test-utils"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "./node_modules/redux-persist/types"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
