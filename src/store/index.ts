@@ -1,4 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
+import {
+  combineReducers,
+  configureStore,
+  createAction,
+} from '@reduxjs/toolkit';
 import usersReducer from '../components/UsersManager/userSlice';
 
 import {
@@ -13,11 +17,19 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-export const rootReducer = configureStore({
-  reducer: {
-    users: usersReducer,
-  },
+export const resetStore = createAction('resetStore');
+
+export const rootReducer = combineReducers({
+  users: usersReducer,
 });
+
+const appReducer: typeof rootReducer = (state, action) => {
+  if (action.type === resetStore.type) {
+    return rootReducer(undefined, action);
+  }
+
+  return rootReducer(state, action);
+};
 
 const persistConfig = {
   key: 'root',
@@ -25,7 +37,7 @@ const persistConfig = {
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig, appReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,

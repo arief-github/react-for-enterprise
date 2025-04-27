@@ -5,7 +5,7 @@ import {
   Spinner,
 } from './components';
 import { useEffect } from 'react';
-import { fetchUsers } from './userSlice';
+import { fetchUsers, selectTotalUsers } from './userSlice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 const UserManager = () => {
@@ -14,9 +14,13 @@ const UserManager = () => {
     (state) => state.users.fetchUsersStatus
   );
 
+  const totalUsers = useAppSelector(selectTotalUsers);
+
   useEffect(() => {
+    if (totalUsers) return;
+
     dispatch(fetchUsers());
-  }, [dispatch]);
+  }, [dispatch, totalUsers]);
 
   return (
     <div className='container py-8 mx-auto'>

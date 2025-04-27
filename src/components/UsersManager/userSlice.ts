@@ -53,6 +53,9 @@ export const usersSlice = createSlice({
     selectUser: (state, action: PayloadAction<string>) => {
       state.selectedUserId = action.payload;
     },
+    resetUser: () => {
+      return userAdapter.getInitialState<UserState>(initialState);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.pending, (state) => {
@@ -103,7 +106,7 @@ export const usersSlice = createSlice({
   },
 });
 
-export const { selectUser, setUsers } = usersSlice.actions;
+export const { selectUser, setUsers, resetUser } = usersSlice.actions;
 
 export const usersSelector = userAdapter.getSelectors<RootState>(
   (state) => state.users
@@ -115,6 +118,7 @@ export const getSelectedUser = (state: RootState) => {
     : null;
 };
 
-export const { selectAll: selectAllUsers } = usersSelector;
+export const { selectAll: selectAllUsers, selectTotal: selectTotalUsers } =
+  usersSelector;
 
 export default usersSlice.reducer;
