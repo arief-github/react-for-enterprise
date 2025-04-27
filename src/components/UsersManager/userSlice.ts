@@ -32,7 +32,21 @@ export const userApiSlice = createApi({
           data: await createUser(user),
         };
       },
-      invalidatesTags: ['Users'],
+      onQueryStarted: async (user, { dispatch, queryFulfilled }) => {
+        const patchResult = dispatch(
+          userApiSlice.util.updateQueryData(
+            'fetchUsers',
+            undefined,
+            (draftUsers) => [...draftUsers, user]
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch (e) {
+          patchResult.undo();
+        }
+      },
     }),
     removeUser: builder.mutation<boolean, User>({
       queryFn: async (user) => {
@@ -41,10 +55,23 @@ export const userApiSlice = createApi({
           data: true,
         };
       },
-      invalidatesTags: ['Users'],
       onQueryStarted: async (user, { dispatch, queryFulfilled }) => {
         dispatch(setDeletingUserId(user.id));
-        await queryFulfilled;
+
+        const patchResult = dispatch(
+          userApiSlice.util.updateQueryData(
+            'fetchUsers',
+            undefined,
+            (draftUsers) => draftUsers.filter((_user) => _user.id !== user.id)
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch (e) {
+          patchResult.undo();
+        }
+
         dispatch(setDeletingUserId(null));
       },
     }),
