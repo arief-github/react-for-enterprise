@@ -4,28 +4,20 @@ import {
   DisplayUser,
   Spinner,
 } from './components';
-import { useEffect } from 'react';
-import { fetchUsers, selectTotalUsers } from './userSlice';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useFetchUsersQuery } from './userSlice';
 
 const UserManager = () => {
-  const dispatch = useAppDispatch();
-  const fetchUsersStatus = useAppSelector(
-    (state) => state.users.fetchUsersStatus
-  );
-
-  const totalUsers = useAppSelector(selectTotalUsers);
-
-  useEffect(() => {
-    if (totalUsers) return;
-
-    dispatch(fetchUsers());
-  }, [dispatch, totalUsers]);
+  const {
+    data: users,
+    isError: isFetchUsersError,
+    isLoading: isFetchUserPending,
+    isSuccess: isFetchUsersSuccess,
+  } = useFetchUsersQuery();
 
   return (
     <div className='container py-8 mx-auto'>
-      {fetchUsersStatus === 'PENDING' ? <Spinner show /> : null}
-      {fetchUsersStatus === 'SUCCESS' ? (
+      {isFetchUserPending ? <Spinner show /> : null}
+      {isFetchUsersSuccess && users.length ? (
         <div className='grid grid-cols-12 gap-4 px-4'>
           <div className='col-span-4'>
             <AddUser />
@@ -38,9 +30,7 @@ const UserManager = () => {
           </div>
         </div>
       ) : null}
-      {fetchUsersStatus === 'ERROR' ? (
-        <p>There was a problem fetching users</p>
-      ) : null}
+      {isFetchUsersError ? <p>There was a problem fetching users</p> : null}
     </div>
   );
 };

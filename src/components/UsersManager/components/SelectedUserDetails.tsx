@@ -1,8 +1,9 @@
 import { useAppSelector } from '@/store/hooks';
-import { getSelectedUser } from '../userSlice';
+import { getSelectedUser, useFetchUsersQuery } from '../userSlice';
 
 const SelectedUserDetails = () => {
-  const selectedUser = useAppSelector(getSelectedUser);
+  const { data: users } = useFetchUsersQuery();
+  const selectedUser = useAppSelector(getSelectedUser(users));
 
   return (
     <>

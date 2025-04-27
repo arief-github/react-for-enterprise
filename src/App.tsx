@@ -3,7 +3,11 @@ import BussinessCard from '@/components/BussinessCard/BussinessCard';
 import UserManager from './components/UsersManager/UsersManager';
 
 import { useAppDispatch } from './store/hooks';
-import { fetchUsers, resetUser } from './components/UsersManager/userSlice';
+import {
+  resetUsersSlice,
+  resetUserApiSlice,
+  initialiseUsersApi,
+} from './components/UsersManager/userSlice';
 import { resetStore } from './store';
 
 function App() {
@@ -17,7 +21,10 @@ function App() {
         <div className='space-x-4 my-8'>
           <button
             className='shadow px-4 py-3 bg-blue-100'
-            onClick={() => dispatch(resetUser())}
+            onClick={() => {
+              dispatch(resetUsersSlice());
+              dispatch(resetUserApiSlice());
+            }}
           >
             Reset User
           </button>
@@ -29,7 +36,10 @@ function App() {
           </button>
           <button
             className='shadow px-4 py-3 bg-blue-100'
-            onClick={() => dispatch(fetchUsers())}
+            onClick={() => {
+              console.log('Clicked');
+              dispatch(initialiseUsersApi());
+            }}
           >
             Fetch User
           </button>

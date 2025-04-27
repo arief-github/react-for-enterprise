@@ -1,6 +1,5 @@
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import React, { useState } from 'react';
-import { addUser } from '../userSlice';
+import React, { useState, useEffect } from 'react';
+import { useCreateUserMutation } from '../userSlice';
 
 const initialState = {
   name: '',
@@ -10,27 +9,26 @@ const initialState = {
 const createdId = () => '_' + Math.random().toString(36).substring(2, 9);
 
 const AddUser = () => {
-  const dispatch = useAppDispatch();
-  const isAddingUser = useAppSelector(
-    (state) => state.users.addUserStatus === 'PENDING'
-  );
-
   const [form, setForm] = useState(initialState);
+  const [addUser, { isLoading: isAddingUser, isSuccess: isAddUserSuccess }] =
+    useCreateUserMutation();
 
   const onAddUser = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (!form.name || !form.email) return;
 
-    dispatch(
-      addUser({
-        id: createdId(),
-        ...form,
-      })
-    );
-
-    setForm(initialState);
+    addUser({
+      id: createdId(),
+      ...form,
+    });
   };
+
+  useEffect(() => {
+    if (isAddUserSuccess) {
+      setForm(initialState);
+    }
+  }, [isAddUserSuccess]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((state) => ({

@@ -1,124 +1,91 @@
-import {
-  createSlice,
-  PayloadAction,
-  createAsyncThunk,
-  createEntityAdapter,
-} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from './UsersManager.types';
 import { RootState } from '@/store';
-import { listUsers, deleteUser, createUser } from '@/api/userApi';
-
-type ApiStatus = 'IDLE' | 'PENDING' | 'SUCCESS' | 'ERROR';
 
 export type UserState = {
-  users: User[];
   selectedUserId: User['id'] | null;
   deletingUserId: User['id'] | null;
-  fetchUsersStatus: ApiStatus;
-  addUserStatus: ApiStatus;
-  deleteUserStatus: ApiStatus;
 };
 
 const initialState: UserState = {
-  users: [],
   selectedUserId: null,
   deletingUserId: null,
-  fetchUsersStatus: 'IDLE',
-  addUserStatus: 'IDLE',
-  deleteUserStatus: 'IDLE',
 };
 
-export const addUser = createAsyncThunk('users/addUser', createUser);
-export const fetchUsers = createAsyncThunk('users/fetchUsers', listUsers);
-export const removeUser = createAsyncThunk(
-  'users/removeUser',
-  async (userData: User) => {
-    await deleteUser(userData.id);
-    return userData;
-  }
-);
-
-const userAdapter = createEntityAdapter<User>({
-  sortComparer: (a, b) => a.email.localeCompare(b.email),
+export const userApiSlice = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl:
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:4000/api'
+        : '/api/',
+  }),
+  tagTypes: ['Users'],
+  endpoints: (builder) => ({
+    fetchUsers: builder.query<User[], void>({
+      query: () => 'user/all',
+      transformResponse: (response: { users: User[] }) => {
+        return response.users;
+      },
+      providesTags: ['Users'],
+    }),
+    createUser: builder.mutation<{ user: User }, User>({
+      query: (user) => ({
+        url: 'user',
+        method: 'POST',
+        body: user,
+      }),
+      invalidatesTags: ['Users'],
+    }),
+    removeUser: builder.mutation<boolean, User>({
+      query: (user) => ({
+        url: `user/${user.id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Users'],
+      onQueryStarted: async (user, { dispatch, queryFulfilled }) => {
+        dispatch(setDeletingUserId(user.id));
+        await queryFulfilled;
+        dispatch(setDeletingUserId(null));
+      },
+    }),
+  }),
 });
+
+export const {
+  useFetchUsersQuery,
+  useCreateUserMutation,
+  useRemoveUserMutation,
+} = userApiSlice;
 
 export const usersSlice = createSlice({
   name: 'users',
-  initialState: userAdapter.getInitialState<UserState>(initialState),
+  initialState,
   reducers: {
-    setUsers: (state, action: PayloadAction<User[]>) => {
-      // state.users = action.payload;
-      userAdapter.setAll(state, action.payload);
-    },
     selectUser: (state, action: PayloadAction<string>) => {
       state.selectedUserId = action.payload;
     },
-    resetUser: () => {
-      return userAdapter.getInitialState<UserState>(initialState);
+    setDeletingUserId: (state, action: PayloadAction<string | null>) => {
+      state.deletingUserId = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(fetchUsers.pending, (state) => {
-      state.fetchUsersStatus = 'PENDING';
-    });
-
-    builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      state.fetchUsersStatus = 'SUCCESS';
-      // state.users = action.payload;
-      userAdapter.setAll(state, action.payload);
-    });
-
-    builder.addCase(fetchUsers.rejected, (state) => {
-      state.fetchUsersStatus = 'ERROR';
-    });
-
-    builder.addCase(addUser.pending, (state) => {
-      state.addUserStatus = 'PENDING';
-    });
-
-    builder.addCase(addUser.fulfilled, (state, action) => {
-      // state.users.push(action.payload.user);
-      userAdapter.addOne(state, action.payload.user);
-      state.addUserStatus = 'SUCCESS';
-    });
-
-    builder.addCase(addUser.rejected, (state) => {
-      state.addUserStatus = 'ERROR';
-    });
-
-    builder.addCase(removeUser.pending, (state, action) => {
-      state.deletingUserId = action.meta.arg.id;
-      state.deleteUserStatus = 'PENDING';
-    });
-
-    builder.addCase(removeUser.fulfilled, (state, action) => {
-      // state.users = state.users.filter(
-      //   (_user) => _user.id !== action.payload.id
-      // );
-
-      userAdapter.removeOne(state, action.payload.id);
-    });
-
-    builder.addCase(removeUser.rejected, (state) => {
-      state.deleteUserStatus = 'ERROR';
-      state.deletingUserId = null;
-    });
+    resetUsersSlice: () => {
+      return initialState;
+    },
   },
 });
 
-export const { selectUser, setUsers, resetUser } = usersSlice.actions;
+export const { setDeletingUserId, selectUser, resetUsersSlice } =
+  usersSlice.actions;
 
-export const usersSelector = userAdapter.getSelectors<RootState>(
-  (state) => state.users
-);
+export const resetUserApiSlice = () => userApiSlice.util.resetApiState();
 
-export const getSelectedUser = (state: RootState) => {
-  return state.users.selectedUserId
-    ? usersSelector.selectById(state, state.users.selectedUserId)
+export const initialiseUsersApi = () =>
+  userApiSlice.endpoints.fetchUsers.initiate();
+
+export const getSelectedUser = (users?: User[]) => (state: RootState) => {
+  return users && state.users.selectedUserId
+    ? users.find((user) => user.id === state.users.selectedUserId)
     : null;
 };
-
-export const { selectAll: selectAllUsers, selectTotal: selectTotalUsers } =
-  usersSelector;
 
 export default usersSlice.reducer;
