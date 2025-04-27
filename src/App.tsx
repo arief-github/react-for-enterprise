@@ -6,12 +6,13 @@ import { useAppDispatch } from './store/hooks';
 import {
   resetUsersSlice,
   resetUserApiSlice,
-  initialiseUsersApi,
+  useFetchUsersQuery,
 } from './components/UsersManager/userSlice';
 import { resetStore } from './store';
 
 function App() {
   const dispatch = useAppDispatch();
+  const { refetch } = useFetchUsersQuery();
 
   return (
     <div className='App mx-auto max-w-6xl text-center my-8'>
@@ -36,10 +37,7 @@ function App() {
           </button>
           <button
             className='shadow px-4 py-3 bg-blue-100'
-            onClick={() => {
-              console.log('Clicked');
-              dispatch(initialiseUsersApi());
-            }}
+            onClick={() => refetch()}
           >
             Fetch User
           </button>

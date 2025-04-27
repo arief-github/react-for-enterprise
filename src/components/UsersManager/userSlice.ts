@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from './UsersManager.types';
 import { RootState } from '@/store';
+import { listUsers, createUser, deleteUser } from '@/api/userApi';
 
 export type UserState = {
   selectedUserId: User['id'] | null;
@@ -14,34 +15,32 @@ const initialState: UserState = {
 };
 
 export const userApiSlice = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl:
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:4000/api'
-        : '/api/',
-  }),
+  baseQuery: fakeBaseQuery(),
   tagTypes: ['Users'],
   endpoints: (builder) => ({
     fetchUsers: builder.query<User[], void>({
-      query: () => 'user/all',
-      transformResponse: (response: { users: User[] }) => {
-        return response.users;
+      queryFn: async () => {
+        return {
+          data: await listUsers(),
+        };
       },
       providesTags: ['Users'],
     }),
     createUser: builder.mutation<{ user: User }, User>({
-      query: (user) => ({
-        url: 'user',
-        method: 'POST',
-        body: user,
-      }),
+      queryFn: async (user) => {
+        return {
+          data: await createUser(user),
+        };
+      },
       invalidatesTags: ['Users'],
     }),
     removeUser: builder.mutation<boolean, User>({
-      query: (user) => ({
-        url: `user/${user.id}`,
-        method: 'DELETE',
-      }),
+      queryFn: async (user) => {
+        await deleteUser(user.id);
+        return {
+          data: true,
+        };
+      },
       invalidatesTags: ['Users'],
       onQueryStarted: async (user, { dispatch, queryFulfilled }) => {
         dispatch(setDeletingUserId(user.id));
@@ -80,7 +79,7 @@ export const { setDeletingUserId, selectUser, resetUsersSlice } =
 export const resetUserApiSlice = () => userApiSlice.util.resetApiState();
 
 export const initialiseUsersApi = () =>
-  userApiSlice.endpoints.fetchUsers.initiate();
+  userApiSlice.endpoints.fetchUsers.initiate(undefined);
 
 export const getSelectedUser = (users?: User[]) => (state: RootState) => {
   return users && state.users.selectedUserId
