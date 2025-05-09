@@ -1,23 +1,28 @@
 import { fetchDog, fetchCat } from '@/api/animalApi';
 import { withAsync } from '@/helpers/withAsync';
 import { useEffect, useState } from 'react';
-
-type ApiStatus = 'IDLE' | 'PENDING' | 'SUCCESS' | 'ERROR';
+import {
+  IDLE,
+  PENDING,
+  ERROR,
+  SUCCESS,
+  ApiStatus,
+} from '@/constants/apiStatuses';
 
 const useFetchDog = () => {
   const [dog, setDog] = useState<string>();
-  const [fetchDogStatus, setFetchDogStatus] = useState<ApiStatus>('IDLE');
+  const [fetchDogStatus, setFetchDogStatus] = useState<ApiStatus>(IDLE);
 
   const initFetchDog = async () => {
-    setFetchDogStatus('PENDING');
+    setFetchDogStatus(PENDING);
 
     const { response, error } = await withAsync(() => fetchDog());
 
     if (error) {
-      setFetchDogStatus('ERROR');
+      setFetchDogStatus(ERROR);
     } else if (response) {
       setDog(response.data.message);
-      setFetchDogStatus('SUCCESS');
+      setFetchDogStatus(SUCCESS);
     }
   };
 
@@ -30,18 +35,18 @@ const useFetchDog = () => {
 
 const useFetchCat = () => {
   const [cat, setCat] = useState<string>();
-  const [fetchCatStatus, setFetchCatStatus] = useState<ApiStatus>('IDLE');
+  const [fetchCatStatus, setFetchCatStatus] = useState<ApiStatus>(IDLE);
 
   const initFetchCat = async () => {
-    setFetchCatStatus('PENDING');
+    setFetchCatStatus(PENDING);
 
     const { response, error } = await withAsync(() => fetchCat());
 
     if (error) {
-      setFetchCatStatus('ERROR');
+      setFetchCatStatus(ERROR);
     } else if (response) {
       setCat(response.data[0].url);
-      setFetchCatStatus('SUCCESS');
+      setFetchCatStatus(SUCCESS);
     }
   };
 
@@ -85,24 +90,24 @@ function AnimalExample() {
     <div className='my-8 mx-auto max-w-2xl'>
       <div className='flex gap-8'>
         <div className='w-64 h-64'>
-          {(fetchCatStatus || fetchDogStatus) === 'IDLE' ? (
+          {(fetchCatStatus || fetchDogStatus) === IDLE ? (
             <p>Welcome!...</p>
           ) : null}
-          {(fetchCatStatus || fetchDogStatus) === 'PENDING' ? (
+          {(fetchCatStatus || fetchDogStatus) === PENDING ? (
             <p>Loading Data...</p>
           ) : null}
-          {(fetchCatStatus || fetchDogStatus) === 'ERROR' ? (
+          {(fetchCatStatus || fetchDogStatus) === ERROR ? (
             <p>There was a problem</p>
           ) : null}
         </div>
 
         <div className='w-1/2'>
-          {fetchCatStatus === 'SUCCESS' ? (
+          {fetchCatStatus === SUCCESS ? (
             <img className='h-64 w-full object-cover' src={cat} alt='Cat' />
           ) : null}
         </div>
         <div className='w-1/2'>
-          {fetchDogStatus === 'SUCCESS' ? (
+          {fetchDogStatus === SUCCESS ? (
             <img className='h-64 w-full object-cover' src={dog} alt='Dog' />
           ) : null}
         </div>
