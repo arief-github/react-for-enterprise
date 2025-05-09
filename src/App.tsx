@@ -1,5 +1,6 @@
 import './App.css';
-import AnimalExample from './components/AnimalExample';
+import AnimalExample from './components/AnimalExampleWithUseApi';
+// import AnimalExample from './components/AnimalExample';
 // import BussinessCard from '@/components/BussinessCard/BussinessCard';
 
 function App() {
