@@ -3,6 +3,7 @@ import { withAsync } from '@/helpers/withAsync';
 import { useEffect, useState } from 'react';
 import { IDLE, PENDING, ERROR, SUCCESS } from '@/constants/apiStatuses';
 import { useApiStatus } from '@/hooks/useApiStatus';
+import LazyLoader from '../LazyLoader';
 
 const useFetchDog = () => {
   const [dog, setDog] = useState<string>();
@@ -104,7 +105,10 @@ function AnimalExample() {
           {isFetchCatIdle || isFetchDogStatusIdle ? <p>Welcome!...</p> : null}
 
           {isFetchCatPending || isFetchDogStatusPending ? (
-            <p>Loading Data...</p>
+            <LazyLoader
+              show={isFetchCatPending || isFetchDogStatusPending}
+              delay={400}
+            />
           ) : null}
           {isFetchCatError || isFetchDogStatusError ? (
             <p>There was a problem</p>
