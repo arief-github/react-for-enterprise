@@ -1,17 +1,19 @@
 import { fetchDog, fetchCat } from '@/api/animalApi';
 import { withAsync } from '@/helpers/withAsync';
 import { useEffect, useState } from 'react';
-import {
-  IDLE,
-  PENDING,
-  ERROR,
-  SUCCESS,
-  ApiStatus,
-} from '@/constants/apiStatuses';
+import { IDLE, PENDING, ERROR, SUCCESS } from '@/constants/apiStatuses';
+import { useApiStatus } from '@/hooks/useApiStatus';
 
 const useFetchDog = () => {
   const [dog, setDog] = useState<string>();
-  const [fetchDogStatus, setFetchDogStatus] = useState<ApiStatus>(IDLE);
+  const {
+    status: fetchDogStatus,
+    setStatus: setFetchDogStatus,
+    isIdle: isFetchDogStatusIdle,
+    isPending: isFetchDogStatusPending,
+    isError: isFetchDogStatusError,
+    isSuccess: isFetchDogStatusSuccess,
+  } = useApiStatus(IDLE);
 
   const initFetchDog = async () => {
     setFetchDogStatus(PENDING);
@@ -30,12 +32,23 @@ const useFetchDog = () => {
     dog,
     initFetchDog,
     fetchDogStatus,
+    isFetchDogStatusIdle,
+    isFetchDogStatusError,
+    isFetchDogStatusPending,
+    isFetchDogStatusSuccess,
   };
 };
 
 const useFetchCat = () => {
   const [cat, setCat] = useState<string>();
-  const [fetchCatStatus, setFetchCatStatus] = useState<ApiStatus>(IDLE);
+  const {
+    status: fetchCatStatus,
+    setStatus: setFetchCatStatus,
+    isIdle: isFetchCatIdle,
+    isPending: isFetchCatPending,
+    isError: isFetchCatError,
+    isSuccess: isFetchCatSuccess,
+  } = useApiStatus(IDLE);
 
   const initFetchCat = async () => {
     setFetchCatStatus(PENDING);
@@ -54,32 +67,30 @@ const useFetchCat = () => {
     cat,
     fetchCatStatus,
     initFetchCat,
+    isFetchCatIdle,
+    isFetchCatPending,
+    isFetchCatError,
+    isFetchCatSuccess,
   };
 };
 
-// const useFetchAnimals = () => {
-//   const { dog, initFetchDog } = useFetchDog();
-//   const { cat, initFetchCat } = useFetchCat();
-
-//   const fetchAnimals = () => {
-//     initFetchDog();
-//     initFetchCat();
-//   };
-
-//   useEffect(() => {
-//     fetchAnimals();
-//   }, []);
-
-//   return {
-//     dog,
-//     cat,
-//     fetchAnimals,
-//   };
-// };
-
 function AnimalExample() {
-  const { dog, fetchDogStatus, initFetchDog } = useFetchDog();
-  const { cat, fetchCatStatus, initFetchCat } = useFetchCat();
+  const {
+    dog,
+    initFetchDog,
+    isFetchDogStatusIdle,
+    isFetchDogStatusPending,
+    isFetchDogStatusError,
+    isFetchDogStatusSuccess,
+  } = useFetchDog();
+  const {
+    cat,
+    initFetchCat,
+    isFetchCatPending,
+    isFetchCatIdle,
+    isFetchCatError,
+    isFetchCatSuccess,
+  } = useFetchCat();
 
   useEffect(() => {
     initFetchDog();
@@ -90,24 +101,23 @@ function AnimalExample() {
     <div className='my-8 mx-auto max-w-2xl'>
       <div className='flex gap-8'>
         <div className='w-64 h-64'>
-          {(fetchCatStatus || fetchDogStatus) === IDLE ? (
-            <p>Welcome!...</p>
-          ) : null}
-          {(fetchCatStatus || fetchDogStatus) === PENDING ? (
+          {isFetchCatIdle || isFetchDogStatusIdle ? <p>Welcome!...</p> : null}
+
+          {isFetchCatPending || isFetchDogStatusPending ? (
             <p>Loading Data...</p>
           ) : null}
-          {(fetchCatStatus || fetchDogStatus) === ERROR ? (
+          {isFetchCatError || isFetchDogStatusError ? (
             <p>There was a problem</p>
           ) : null}
         </div>
 
         <div className='w-1/2'>
-          {fetchCatStatus === SUCCESS ? (
+          {isFetchCatSuccess ? (
             <img className='h-64 w-full object-cover' src={cat} alt='Cat' />
           ) : null}
         </div>
         <div className='w-1/2'>
-          {fetchDogStatus === SUCCESS ? (
+          {isFetchDogStatusSuccess ? (
             <img className='h-64 w-full object-cover' src={dog} alt='Dog' />
           ) : null}
         </div>
