@@ -13,7 +13,7 @@ import './App.css';
 import { Link, Route, Routes } from 'react-router-dom';
 import Spinner from '@/components/Spinner';
 import TrackCursor from '@/components/TrackCursor';
-import Search from '@/components/Search';
+// import Search from '@/components/Search';
 
 type User = {
   id: number;
@@ -65,7 +65,7 @@ function App() {
 
       <div className='space-y-8'>
         <TrackCursor />
-        <Search />
+        {/* <Search /> */}
       </div>
 
       <div

@@ -1,4 +1,4 @@
-﻿import axios, { AxiosError, AxiosInstance } from 'axios';
+﻿import axios, { AxiosInstance } from 'axios';
 import {
   ApiRequestConfig,
   WithAbortFn,
@@ -16,7 +16,10 @@ const axiosParams = {
 
 const axiosInstance = axios.create(axiosParams);
 
-const didAbort = (error: AxiosError) => axios.isCancel(error);
+// export const didAbort = (error: AxiosError) => axios.isCancel(error);
+
+export const didAbort = (error: unknown): error is ApiError =>
+  axios.isCancel(error);
 
 const getCancelSource = () => axios.CancelToken.source();
 
