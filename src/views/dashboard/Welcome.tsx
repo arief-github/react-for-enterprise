@@ -1,5 +1,11 @@
+import Products from '@/components/products/Products';
+
 const Welcome = () => {
-  return <div>Welkammm</div>;
+  return (
+    <div>
+      <Products />
+    </div>
+  );
 };
 
 export default Welcome;
