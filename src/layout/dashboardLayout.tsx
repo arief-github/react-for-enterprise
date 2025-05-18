@@ -1,0 +1,24 @@
+import { Outlet } from 'react-router-dom';
+import styles from './dashboardLayout.module.css';
+import { Header, Sidebar, Footer } from './components';
+
+const DashboardLayout = () => {
+  return (
+    <div className={styles.dashboardLayout}>
+      <div className='col-span-2 row-span-1'>
+        <Header />
+      </div>
+      <aside className='row-start-2 row-span-1'>
+        <Sidebar />
+      </aside>
+      <main className='col-start-2 col-span-1'>
+        <Outlet />
+      </main>
+      <div className='col-span-2'>
+        <Footer />
+      </div>
+    </div>
+  );
+};
+
+export default DashboardLayout;
