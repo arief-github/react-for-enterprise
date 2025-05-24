@@ -1,4 +1,5 @@
 import './App.css';
+import CompositionAlert from './components/composition-configuration/Alert/CompositionAlert';
 import AuthLayout from './layout/AuthLayout';
 import DashboardLayout from './layout/dashboardLayout';
 import {
@@ -15,6 +16,7 @@ function App() {
   return (
     <div className='App mx-auto max-w-6xl text-center my-8'>
       <Router>
+        <CompositionAlert />
         <nav className='my-8 space-x-4'>
           <Link to='/'>Dashboard</Link>
           <Link to='/login'>Login</Link>
