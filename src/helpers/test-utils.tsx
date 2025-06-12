@@ -1,10 +1,12 @@
 import { render, RenderOptions } from '@testing-library/react';
 import '@/index.css';
 import React from 'react';
-type AllTheProvidersProps = {
-  children: React.ReactNode;
-};
-const AllTheProviders = ({ children }: AllTheProvidersProps) => {
+
+export type AllTheProviderProps<P> = P & { children: React.ReactNode };
+
+const AllTheProviders = <P extends Record<string, unknown>>({
+  children,
+}: AllTheProviderProps<P>) => {
   return <>{children}</>;
 };
 const customRender = (

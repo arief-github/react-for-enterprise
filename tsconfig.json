@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "ESNext",
+    "types": ["vitest"],
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
@@ -21,6 +22,6 @@
       "test-utils": ["src/helpers/test-utils"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/types", "vitest.setup.ts", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
