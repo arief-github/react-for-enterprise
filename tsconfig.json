@@ -15,6 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "types": ["cypress", "@testing-library/cypress"],
     "jsx": "react-jsx",
     "paths": {
       "@/*": ["src/*"],
